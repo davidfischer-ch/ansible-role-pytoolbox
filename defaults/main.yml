@@ -32,6 +32,16 @@ pytooblox_dynamic_defaults:
       - libz-dev
       - python-gi
 
+  ubuntu-22.*:
+    pytoolbox_packages:
+      - libexiv2-dev
+      - liblzma-dev
+      - libxml2-dev
+      - libxslt-dev
+      - libyaml-dev
+      - libz-dev
+      - python3-gi
+
   linux:
     pytoolbox_packages:
       - gir1.2-gexiv2-0.10
