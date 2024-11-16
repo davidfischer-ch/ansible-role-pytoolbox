@@ -1,23 +1,31 @@
 ---
 
-- dynamic_defaults:
-    hostvars: '{{ hostvars[inventory_hostname] }}'
-    defaults: '{{ pytooblox_dynamic_defaults }}'
-    must_match: yes
+- block:
+    - dynamic_defaults:
+        hostvars: '{{ hostvars[inventory_hostname] }}'
+        defaults: '{{ pytooblox_dynamic_defaults }}'
+        must_match: true
+
+    - ansible.builtin.assert:
+        that:
+          - pytoolbox_version is defined
   tags: [pytoolbox, always]
 
 - block:
     - name: Install pytoolbox packages
-      package:
+      ansible.builtin.package:
         name: '{{ pytoolbox_packages }}'
         state: present
 
-    - name: Install pytoolbox Python packages
-      pip:
+    - name: Install pytoolbox Python package from release
+      ansible.builtin.pip:
         name: pytoolbox
-        executable: pip{{ item }}
+        executable: '{{ pytoolbox_pip_path }}'
         state: "{{ (pytoolbox_version == 'latest')|ternary('latest', omit) }}"
+        umask: '{{ pytoolbox_pip_umask }}'
         version: "{{ (pytoolbox_version == 'latest')|ternary(omit, pytoolbox_version) }}"
-      loop: '{{ pytoolbox_python_versions }}'
-  become: yes
+      environment: '{{ pytoolbox_pip_environment }}'
+  become: true
   tags: [pytoolbox, packages]
+
+...
